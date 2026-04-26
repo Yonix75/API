@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>One Piece API</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --red: #C41E3A;
+    --gold: #D4AF37;
+    --gold-dim: rgba(212,175,55,0.2);
+    --navy: #111827;
+    --navy-light: #1E293B;
+    --surface: #0F172A;
+    --card: #1E293B;
+    --border: rgba(212,175,55,0.15);
+    --text: #F1F5F9;
+    --text-muted: #94A3B8;
+    --success: #22C55E;
+    --error: #EF4444;
+  }
+
+  body {
+    font-family: 'Lato', sans-serif;
+    background: var(--surface);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--navy);
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    height: 64px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+  }
+
+  .logo-skull {
+    width: 38px; height: 38px;
+    background: var(--red);
+    border: 2px solid var(--gold);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  .logo-text { font-family: 'Cinzel', serif; color: var(--gold); font-size: 18px; font-weight: 700; letter-spacing: 1px; }
+  .logo-sub { font-size: 10px; color: var(--text-muted); letter-spacing: 2px; text-transform: uppercase; }
+
+  nav { display: flex; gap: 4px; margin-left: auto; }
+
+  .nav-btn {
+    padding: 8px 20px;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    background: none;
+    color: var(--text-muted);
+    font-family: 'Lato', sans-serif;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .nav-btn:hover { color: var(--text); border-color: var(--border); }
+  .nav-btn.active { color: var(--gold); border-color: var(--gold-dim); background: rgba(212,175,55,0.06); }
+
+  /* ── LAYOUT ── */
+  .page { display: none; padding: 32px; max-width: 1200px; margin: 0 auto; }
+  .page.active { display: block; }
+
+  .page-title {
+    font-family: 'Cinzel', serif;
+    font-size: 24px;
+    color: var(--gold);
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .page-sub { color: var(--text-muted); font-size: 13px; margin-bottom: 28px; }
+
+  /* ── SECTIONS ── */
+  .sections-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+
+  @media (max-width: 900px) { .sections-grid { grid-template-columns: 1fr; } }
+
+  .section {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .section-head {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-icon {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .icon-red { background: rgba(196,30,58,0.15); }
+  .icon-gold { background: rgba(212,175,55,0.12); }
+  .icon-blue { background: rgba(56,130,221,0.15); }
+  .icon-teal { background: rgba(20,184,166,0.15); }
+
+  .section-title { font-family: 'Cinzel', serif; font-size: 13px; color: var(--text); letter-spacing: 0.5px; }
+  .section-desc { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+
+  .method-tag {
+    margin-left: auto;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-family: monospace;
+    letter-spacing: 0.5px;
+  }
+
+  .get-tag { background: rgba(20,184,166,0.15); color: #14B8A6; }
+  .post-tag { background: rgba(34,197,94,0.15); color: #22C55E; }
+  .put-tag { background: rgba(249,115,22,0.15); color: #F97316; }
+  .del-tag { background: rgba(239,68,68,0.15); color: #EF4444; }
+
+  /* ── FORMS ── */
+  .section-body { padding: 20px; }
+
+  .field { margin-bottom: 14px; }
+  .field label { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 6px; }
+
+  .field input, .field select {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 6px;
+    padding: 9px 12px;
+    color: var(--text);
+    font-family: 'Lato', sans-serif;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .field input:focus, .field select:focus { border-color: rgba(212,175,55,0.4); }
+  .field input::placeholder { color: rgba(255,255,255,0.2); }
+
+  .field select option { background: var(--navy); }
+
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 18px;
+    border-radius: 6px;
+    font-family: 'Lato', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+  }
+
+  .btn-primary { background: var(--red); color: white; }
+  .btn-primary:hover { background: #a0172e; transform: translateY(-1px); }
+
+  .btn-secondary { background: rgba(212,175,55,0.1); color: var(--gold); border: 1px solid var(--gold-dim); }
+  .btn-secondary:hover { background: rgba(212,175,55,0.15); }
+
+  .btn-danger { background: rgba(239,68,68,0.1); color: #EF4444; border: 1px solid rgba(239,68,68,0.2); }
+  .btn-danger:hover { background: rgba(239,68,68,0.2); }
+
+  .btn-warning { background: rgba(249,115,22,0.1); color: #F97316; border: 1px solid rgba(249,115,22,0.2); }
+  .btn-warning:hover { background: rgba(249,115,22,0.2); }
+
+  /* ── RESULTS ── */
+  .result-box {
+    margin-top: 14px;
+    background: var(--surface);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px;
+    padding: 14px;
+    font-family: monospace;
+    font-size: 12px;
+    line-height: 1.7;
+    max-height: 280px;
+    overflow-y: auto;
+    display: none;
+  }
+
+  .result-box.show { display: block; }
+
+  .result-box.success { border-color: rgba(34,197,94,0.25); }
+  .result-box.error { border-color: rgba(239,68,68,0.25); }
+
+  /* JSON coloring */
+  .json-key { color: #93C5FD; }
+  .json-str { color: #86EFAC; }
+  .json-num { color: #FCD34D; }
+  .json-bool { color: #F9A8D4; }
+  .json-null { color: #94A3B8; }
+
+  /* ── CARDS LIST ── */
+  .items-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 320px;
+    overflow-y: auto;
+    padding-right: 4px;
+  }
+
+  .items-list::-webkit-scrollbar { width: 4px; }
+  .items-list::-webkit-scrollbar-track { background: transparent; }
+  .items-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .item-card {
+    background: var(--navy);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: border-color 0.2s;
+    animation: fadeIn 0.3s ease;
+  }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+  .item-card:hover { border-color: var(--gold-dim); }
+
+  .item-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .dot-red { background: var(--red); }
+  .dot-gold { background: var(--gold); }
+  .dot-blue { background: #3B82F6; }
+  .dot-teal { background: #14B8A6; }
+
+  .item-name { font-size: 13px; font-weight: 700; color: var(--text); }
+  .item-meta { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+
+  .item-id {
+    margin-left: auto;
+    font-size: 10px;
+    font-family: monospace;
+    color: var(--text-muted);
+    background: rgba(255,255,255,0.04);
+    padding: 2px 6px;
+    border-radius: 4px;
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* ── TOAST ── */
+  #toast {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    z-index: 999;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: all 0.3s;
+    pointer-events: none;
+  }
+
+  #toast.show { opacity: 1; transform: translateY(0); }
+  #toast.success { background: rgba(34,197,94,0.15); border: 1px solid rgba(34,197,94,0.3); color: #22C55E; }
+  #toast.error { background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.3); color: #EF4444; }
+
+  /* ── FULL WIDTH SECTION ── */
+  .full-section { grid-column: 1 / -1; }
+
+  /* ── ENDPOINT BADGE ── */
+  .endpoint-line {
+    font-family: monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 10px;
+    padding: 6px 10px;
+    background: rgba(0,0,0,0.2);
+    border-radius: 4px;
+    border: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 32px 16px;
+    color: var(--text-muted);
+    font-size: 13px;
+  }
+
+  .empty-state span { font-size: 28px; display: block; margin-bottom: 8px; opacity: 0.4; }
+
+  .loading { animation: pulse 1s infinite; }
+  @keyframes pulse { 0%,100%{ opacity:0.5 } 50%{ opacity:1 } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-skull">☠</div>
+    <div>
+      <div class="logo-text">ONE PIECE API</div>
+      <div class="logo-sub">FastAPI · MongoDB</div>
+    </div>
+  </div>
+  <nav>
+    <button class="nav-btn active" onclick="showPage('fruits', this)">🍑 Fruits du Démon</button>
+    <button class="nav-btn" onclick="showPage('crews', this)">🏴‍☠️ Équipages</button>
+  </nav>
+</header>
+
+<!-- ═══════════════════════════ FRUITS PAGE ═══════════════════════════ -->
+<div id="page-fruits" class="page active">
+  <div class="page-title">🍑 Fruits du Démon</div>
+  <div class="page-sub">CRUD complet — <code style="font-size:11px;color:var(--gold)">/fruits</code></div>
+
+  <div class="sections-grid">
+
+    <!-- GET ALL -->
+    <div class="section">
+      <div class="section-head">
+        <div class="section-icon icon-teal">📋</div>
+        <div>
+          <div class="section-title">Lister les fruits</div>
+          <div class="section-desc">Récupère tous les fruits, filtrable par type</div>
+        </div>
+        <span class="method-tag get-tag">GET</span>
+      </div>
+      <div class="section-body">
+        <div class="field">
+          <label>Filtrer par type (optionnel)</label>
+          <select id="fruit-get-type">
+            <option value="">— Tous les types —</option>
+            <option value="Paramecia">Paramecia</option>
+            <option value="Zoan">Zoan</option>
+            <option value="Logia">Logia</option>
+          </select>
+        </div>
+        <button class="btn btn-secondary" onclick="getFruits()">⚡ Charger les fruits</button>
+        <div class="endpoint-line">GET /fruits?type={type}</div>
+        <div id="fruits-list" class="items-list" style="margin-top:14px">
+          <div class="empty-state"><span>🍑</span>Clique sur "Charger" pour voir les fruits</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEARCH -->
+    <div class="section">
+      <div class="section-head">
+        <div class="section-icon icon-blue">🔍</div>
+        <div>
+          <div class="section-title">Rechercher un fruit</div>
+          <div class="section-desc">Recherche par nom (regex insensible à la casse)</div>
+        </div>
+        <span class="method-tag get-tag">GET</span>
+      </div>
+      <div class="section-body">
+        <div class="field">
+          <label>Nom du fruit</label>
+          <input id="fruit-search-name" type="text" placeholder="ex: Gomu, Mera, Gura...">
+        </div>
+        <button class="btn btn-secondary" onclick="searchFruit()">🔍 Rechercher</button>
+        <div class="endpoint-line">GET /fruits/search?name={name}</div>
+        <div id="fruit-search-result" class="result-box"></div>
+      </div>
+    </div>
+
+    <!-- CREATE -->
+    <div class="section">
+      <div class="section-head">
+        <div class="section-icon icon-teal">✨</div>
+        <div>
+          <div class="section-title">Créer un fruit</div>
+          <div class="section-desc">Ajoute un nouveau Fruit du Démon</div>
+        </div>
+        <span class="method-tag post-tag">POST</span>
+      </div>
+      <div class="section-body">
+        <div class="field">
+          <label>Nom <span style="color:var(--red)">*</span></label>
+          <input id="fruit-create-name" type="text" placeholder="ex: Gomu Gomu no Mi">
+        </div>
+        <div class="row">
+          <div class="field">
+            <label>Type <span style="color:var(--red)">*</span></label>
+            <select id="fruit-create-type">
+              <option value="Paramecia">Paramecia</option>
+              <option value="Zoan">Zoan</option>
+              <option value="Logia">Logia</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Pouvoir <span style="color:var(--red)">*</span></label>
+            <input id="fruit-create-power" type="text" placeholder="ex: Corps en caoutchouc">
+          </div>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label>Utilisateur actuel</label>
+            <input id="fruit-create-current-user" type="text" placeholder="ex: Monkey D. Luffy">
+          </div>
+          <div class="field">
+            <label>Utilisateur précédent</label>
+            <input id="fruit-create-previous-user" type="text" placeholder="ex: Gol D. Roger">
+          </div>
+        </div>
+        <div class="field">
+          <label>Description</label>
+          <input id="fruit-create-description" type="text" placeholder="ex: Fruit mythique de la légende...">
+        </div>
+        <button class="btn btn-primary" onclick="createFruit()">➕ Créer le fruit</button>
+        <div class="endpoint-line">POST /fruits · Body: JSON</div>
+        <div id="fruit-create-result" class="result-box"></div>
+      </div>
+    </div>
+
+    <!-- UPDATE -->
+    <div class="section">
+      <div class="section-head">
+        <div class="section-icon icon-gold">✏️</div>
+        <div>
+          <div class="section-title">Modifier un fruit</div>
+          <div class="section-desc">Met à jour un fruit via son ID MongoDB</div>
+        </div>
+        <span class="method-tag put-tag">PUT</span>
+      </div>
+      <div class="section-body">
+        <div class="field">
+          <label>ID du fruit</label>
+          <input id="fruit-update-id" type="text" placeholder="ex: 507f1f77bcf86cd799439011">
+        </div>
+        <div class="field">
+          <label>Nom</label>
+          <input id="fruit-update-name" type="text" placeholder="Nouveau nom">
+        </div>
+        <div class="row">
+          <div class="field">
+            <label>Type</label>
+            <select id="fruit-update-type">
+              <option value="Paramecia">Paramecia</option>
+              <option value="Zoan">Zoan</option>
+              <option value="Logia">Logia</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Pouvoir</label>
+            <input id="fruit-update-power" type="text" placeholder="Nouveau pouvoir">
+          </div>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label>Utilisateur actuel</label>
+            <input id="fruit-update-current-user" type="text" placeholder="Nouvel utilisateur actuel">
+          </div>
+          <div class="field">
+            <label>Utilisateur précédent</label>
+            <input id="fruit-update-previous-user" type="text" placeholder="Ancien utilisateur">
+          </div>
+        </div>
+        <div class="field">
+          <label>Description</label>
+          <input id="fruit-update-description" type="text" placeholder="Nouvelle description">
+        </div>
+        <button class="btn btn-warning" onclick="updateFruit()">💾 Mettre à jour</button>
+        <div class="endpoint-line">PUT /fruits/{id} · Body: JSON</div>
+        <div id="fruit-update-result" class="result-box"></div>
+      </div>
+    </div>
+
+    <!-- DELETE -->
+    <div class="section full-section">
+      <div class="section-head">
+        <div class="section-icon icon-red">🗑️</div>
+        <div>
+          <div class="section-title">Supprimer un fruit</div>
+          <div class="section-desc">Supprime définitivement un fruit via son ID</div>
+        </div>
+        <span class="method-tag del-tag">DELETE</span>
+      </div>
+      <div class="section-body" style="display:grid;grid-template-columns:1fr auto;gap:12px;align-items:end">
+        <div class="field" style="margin:0">
+          <label>ID du fruit à supprimer</label>
+          <input id="fruit-delete-id" type="text" placeholder="ex: 507f1f77bcf86cd799439011">
+        </div>
+        <button class="btn btn-danger" onclick="deleteFruit()" style="height:38px">🗑️ Supprimer</button>
+        <div style="grid-column:1/-1">
+          <div class="endpoint-line">DELETE /fruits/{id}</div>
+          <div id="fruit-delete-result" class="result-box"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════ CREWS PAGE ═══════════════════════════ -->
+<div id="page-crews" class="page">
+  <div class="page-title">🏴‍☠️ Équipages</div>
+  <div class="page-sub">CRUD complet — <code style="font-size:11px;color:var(--gold)">/crews</code></div>
+
+  <div class="sections-grid">
+
+    <!-- GET ALL -->
+    <div class="section">
+      <div class="section-head">
+        <div class="section-icon icon-teal">📋</div>
+        <div>
+          <div class="section-title">Lister les équipages</div>
+          <div class="section-desc">Récupère tous les équipages, filtrable par type</div>
+        </div>
+        <span class="method-tag get-tag">GET</span>
+      </div>
+      <div class="section-body">
+        <div class="field">
+          <label>Filtrer par type (optionnel)</label>
+          <input id="crew-get-type" type="text" placeholder="ex: Pirate, Marine...">
+        </div>
+        <button class="btn btn-secondary" onclick="getCrews()">⚡ Charger les équipages</button>
+        <div class="endpoint-line">GET /crews?type={type}</div>
+        <div id="crews-list" class="items-list" style="margin-top:14px">
+          <div class="empty-state"><span>🏴‍☠️</span>Clique sur "Charger" pour voir les équipages</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEARCH -->
+    <div class="section">
+      <div class="section-head">
+        <div class="section-icon icon-blue">🔍</div>
+        <div>
+          <div class="section-title">Rechercher un équipage</div>
+          <div class="section-desc">Recherche par nom (regex insensible à la casse)</div>
+        </div>
+        <span class="method-tag get-tag">GET</span>
+      </div>
+      <div class="section-body">
+        <div class="field">
+          <label>Nom de l'équipage</label>
+          <input id="crew-search-name" type="text" placeholder="ex: Chapeau, Barbe, Coeur...">
+        </div>
+        <button class="btn btn-secondary" onclick="searchCrew()">🔍 Rechercher</button>
+        <div class="endpoint-line">GET /crews/search?name={name}</div>
+        <div id="crew-search-result" class="result-box"></div>
+      </div>
+    </div>
+
+    <!-- CREATE -->
+    <div class="section">
+      <div class="section-head">
+        <div class="section-icon icon-teal">✨</div>
+        <div>
+          <div class="section-title">Créer un équipage</div>
+          <div class="section-desc">Ajoute un nouvel équipage en base</div>
+        </div>
+        <span class="method-tag post-tag">POST</span>
+      </div>
+      <div class="section-body">
+        <div class="row">
+          <div class="field">
+            <label>ID <span style="color:var(--red)">*</span></label>
+            <input id="crew-create-id" type="number" placeholder="ex: 1">
+          </div>
+          <div class="field">
+            <label>Nom <span style="color:var(--red)">*</span></label>
+            <input id="crew-create-name" type="text" placeholder="ex: Chapeau de Paille">
+          </div>
+        </div>
+        <div class="field">
+          <label>Description <span style="color:var(--red)">*</span></label>
+          <input id="crew-create-description" type="text" placeholder="ex: L'équipage du futur Roi des Pirates">
+        </div>
+        <div class="row">
+          <div class="field">
+            <label>Statut <span style="color:var(--red)">*</span></label>
+            <input id="crew-create-status" type="text" placeholder="ex: Actif, Dissous...">
+          </div>
+          <div class="field">
+            <label>Nombre de membres <span style="color:var(--red)">*</span></label>
+            <input id="crew-create-number" type="text" placeholder="ex: 10">
+          </div>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label>Nom romain <span style="color:var(--red)">*</span></label>
+            <input id="crew-create-roman-name" type="text" placeholder="ex: Straw Hat Pirates">
+          </div>
+          <div class="field">
+            <label>Prime totale <span style="color:var(--red)">*</span></label>
+            <input id="crew-create-total-prime" type="text" placeholder="ex: 3.161.000.100">
+          </div>
+        </div>
+        <div class="field">
+          <label>Est un Yonko ? <span style="color:var(--red)">*</span></label>
+          <select id="crew-create-is-yonko">
+            <option value="Non">Non</option>
+            <option value="Oui">Oui</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" onclick="createCrew()">➕ Créer l'équipage</button>
+        <div class="endpoint-line">POST /crews · Body: JSON</div>
+        <div id="crew-create-result" class="result-box"></div>
+      </div>
+    </div>
+
+    <!-- UPDATE -->
+    <div class="section">
+      <div class="section-head">
+        <div class="section-icon icon-gold">✏️</div>
+        <div>
+          <div class="section-title">Modifier un équipage</div>
+          <div class="section-desc">Met à jour un équipage via son ID MongoDB</div>
+        </div>
+        <span class="method-tag put-tag">PUT</span>
+      </div>
+      <div class="section-body">
+        <div class="field">
+          <label>ID de l'équipage (MongoDB)</label>
+          <input id="crew-update-id" type="text" placeholder="ex: 507f1f77bcf86cd799439011">
+        </div>
+        <div class="field">
+          <label>Nom</label>
+          <input id="crew-update-name" type="text" placeholder="Nouveau nom">
+        </div>
+        <div class="field">
+          <label>Description</label>
+          <input id="crew-update-description" type="text" placeholder="Nouvelle description">
+        </div>
+        <div class="row">
+          <div class="field">
+            <label>Statut</label>
+            <input id="crew-update-status" type="text" placeholder="ex: Actif, Dissous...">
+          </div>
+          <div class="field">
+            <label>Nombre de membres</label>
+            <input id="crew-update-number" type="text" placeholder="ex: 10">
+          </div>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label>Nom romain</label>
+            <input id="crew-update-roman-name" type="text" placeholder="ex: Straw Hat Pirates">
+          </div>
+          <div class="field">
+            <label>Prime totale</label>
+            <input id="crew-update-total-prime" type="text" placeholder="ex: 3.161.000.100">
+          </div>
+        </div>
+        <div class="field">
+          <label>Est un Yonko ?</label>
+          <select id="crew-update-is-yonko">
+            <option value="">— inchangé —</option>
+            <option value="Non">Non</option>
+            <option value="Oui">Oui</option>
+          </select>
+        </div>
+        <button class="btn btn-warning" onclick="updateCrew()">💾 Mettre à jour</button>
+        <div class="endpoint-line">PUT /crews/{id} · Body: JSON</div>
+        <div id="crew-update-result" class="result-box"></div>
+      </div>
+    </div>
+
+    <!-- DELETE -->
+    <div class="section full-section">
+      <div class="section-head">
+        <div class="section-icon icon-red">🗑️</div>
+        <div>
+          <div class="section-title">Supprimer un équipage</div>
+          <div class="section-desc">Supprime définitivement un équipage via son ID</div>
+        </div>
+        <span class="method-tag del-tag">DELETE</span>
+      </div>
+      <div class="section-body" style="display:grid;grid-template-columns:1fr auto;gap:12px;align-items:end">
+        <div class="field" style="margin:0">
+          <label>ID de l'équipage à supprimer</label>
+          <input id="crew-delete-id" type="text" placeholder="ex: 507f1f77bcf86cd799439011">
+        </div>
+        <button class="btn btn-danger" onclick="deleteCrew()" style="height:38px">🗑️ Supprimer</button>
+        <div style="grid-column:1/-1">
+          <div class="endpoint-line">DELETE /crews/{id}</div>
+          <div id="crew-delete-result" class="result-box"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script>
+const BASE = "";  // Vide = même origine (FastAPI sert ce fichier)
+
+// ── Navigation ──
+function showPage(name, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── Toast ──
+function toast(msg, type = 'success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'show ' + type;
+  setTimeout(() => t.className = '', 3000);
+}
+
+// ── JSON pretty print ──
+function colorJson(obj) {
+  const str = JSON.stringify(obj, null, 2);
+  return str
+    .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, match => {
+      if (/^"/.test(match)) {
+        if (/:$/.test(match)) return `<span class="json-key">${match}</span>`;
+        return `<span class="json-str">${match}</span>`;
+      }
+      if (/true|false/.test(match)) return `<span class="json-bool">${match}</span>`;
+      if (/null/.test(match)) return `<span class="json-null">${match}</span>`;
+      return `<span class="json-num">${match}</span>`;
+    });
+}
+
+function showResult(id, data, isError = false) {
+  const el = document.getElementById(id);
+  el.innerHTML = colorJson(data);
+  el.className = 'result-box show ' + (isError ? 'error' : 'success');
+}
+
+// ── API helpers ──
+async function api(method, url, body = null) {
+  const opts = {
+    method,
+    headers: { 'Content-Type': 'application/json' }
+  };
+  if (body) opts.body = JSON.stringify(body);
+  const res = await fetch(BASE + url, opts);
+  const data = await res.json();
+  if (!res.ok) throw { status: res.status, ...data };
+  return data;
+}
+
+// ══════════════════════ FRUITS ══════════════════════
+
+async function getFruits() {
+  const type = document.getElementById('fruit-get-type').value;
+  const url = type ? `/fruits?type=${encodeURIComponent(type)}` : '/fruits';
+  const list = document.getElementById('fruits-list');
+  list.innerHTML = '<div class="loading" style="text-align:center;padding:20px;color:var(--text-muted);font-size:13px">Chargement...</div>';
+  try {
+    const data = await api('GET', url);
+    if (!data.length) {
+      list.innerHTML = '<div class="empty-state"><span>🍑</span>Aucun fruit trouvé</div>';
+      return;
+    }
+    list.innerHTML = data.map(f => `
+      <div class="item-card" onclick="fillFruitIds('${f.id}')">
+        <div class="item-dot ${f.type === 'Logia' ? 'dot-gold' : f.type === 'Zoan' ? 'dot-blue' : 'dot-red'}"></div>
+        <div>
+          <div class="item-name">${f.name || '—'}</div>
+          <div class="item-meta">${f.type || ''} ${f.user ? '· ' + f.user : ''}</div>
+        </div>
+        <div class="item-id" title="${f.id}">${f.id}</div>
+      </div>`).join('');
+    toast(`${data.length} fruit(s) chargé(s)`);
+  } catch (e) {
+    list.innerHTML = `<div class="empty-state" style="color:var(--error)"><span>⚠️</span>${e.detail || 'Erreur de connexion'}</div>`;
+    toast('Erreur: ' + (e.detail || 'serveur inaccessible'), 'error');
+  }
+}
+
+function fillFruitIds(id) {
+  document.getElementById('fruit-update-id').value = id;
+  document.getElementById('fruit-delete-id').value = id;
+  toast('ID copié dans les champs update/delete', 'success');
+}
+
+async function searchFruit() {
+  const name = document.getElementById('fruit-search-name').value.trim();
+  if (!name) { toast('Entre un nom à rechercher', 'error'); return; }
+  try {
+    const data = await api('GET', `/fruits/search?name=${encodeURIComponent(name)}`);
+    showResult('fruit-search-result', data);
+    toast('Fruit trouvé !');
+  } catch (e) {
+    showResult('fruit-search-result', e, true);
+    toast(e.detail || 'Fruit non trouvé', 'error');
+  }
+}
+
+async function createFruit() {
+  const body = {
+    name: document.getElementById('fruit-create-name').value.trim(),
+    type: document.getElementById('fruit-create-type').value,
+    power: document.getElementById('fruit-create-power').value.trim(),
+    current_user: document.getElementById('fruit-create-current-user').value.trim() || null,
+    previous_user: document.getElementById('fruit-create-previous-user').value.trim() || null,
+    description: document.getElementById('fruit-create-description').value.trim() || null,
+  };
+  if (!body.name) { toast('Le nom est obligatoire', 'error'); return; }
+  if (!body.power) { toast('Le pouvoir est obligatoire', 'error'); return; }
+  try {
+    const data = await api('POST', '/fruits', body);
+    showResult('fruit-create-result', data);
+    toast('Fruit créé ! 🍑');
+    ['fruit-create-name','fruit-create-power','fruit-create-current-user','fruit-create-previous-user','fruit-create-description'].forEach(id => document.getElementById(id).value = '');
+  } catch (e) {
+    showResult('fruit-create-result', e, true);
+    toast('Erreur création: ' + (e.detail || ''), 'error');
+  }
+}
+
+async function updateFruit() {
+  const id = document.getElementById('fruit-update-id').value.trim();
+  if (!id) { toast("Entre l'ID du fruit", 'error'); return; }
+  const body = {
+    name: document.getElementById('fruit-update-name').value.trim(),
+    type: document.getElementById('fruit-update-type').value,
+    power: document.getElementById('fruit-update-power').value.trim(),
+    current_user: document.getElementById('fruit-update-current-user').value.trim() || null,
+    previous_user: document.getElementById('fruit-update-previous-user').value.trim() || null,
+    description: document.getElementById('fruit-update-description').value.trim() || null,
+  };
+  try {
+    const data = await api('PUT', `/fruits/${id}`, body);
+    showResult('fruit-update-result', data);
+    toast('Fruit mis à jour ✓');
+  } catch (e) {
+    showResult('fruit-update-result', e, true);
+    toast(e.detail || 'Erreur mise à jour', 'error');
+  }
+}
+
+async function deleteFruit() {
+  const id = document.getElementById('fruit-delete-id').value.trim();
+  if (!id) { toast("Entre l'ID à supprimer", 'error'); return; }
+  if (!confirm(`Supprimer le fruit ${id} ?`)) return;
+  try {
+    const data = await api('DELETE', `/fruits/${id}`);
+    showResult('fruit-delete-result', data);
+    toast('Fruit supprimé 🗑️');
+    document.getElementById('fruit-delete-id').value = '';
+    getFruits();
+  } catch (e) {
+    showResult('fruit-delete-result', e, true);
+    toast(e.detail || 'Erreur suppression', 'error');
+  }
+}
+
+// ══════════════════════ CREWS ══════════════════════
+
+async function getCrews() {
+  const type = document.getElementById('crew-get-type').value.trim();
+  const url = type ? `/crews?type=${encodeURIComponent(type)}` : '/crews';
+  const list = document.getElementById('crews-list');
+  list.innerHTML = '<div class="loading" style="text-align:center;padding:20px;color:var(--text-muted);font-size:13px">Chargement...</div>';
+  try {
+    const data = await api('GET', url);
+    if (!data.length) {
+      list.innerHTML = '<div class="empty-state"><span>🏴‍☠️</span>Aucun équipage trouvé</div>';
+      return;
+    }
+    list.innerHTML = data.map(c => `
+      <div class="item-card" onclick="fillCrewIds('${c.id}')">
+        <div class="item-dot dot-gold"></div>
+        <div>
+          <div class="item-name">${c.name || '—'}</div>
+          <div class="item-meta">${c.roman_name ? c.roman_name : ''} ${c.status ? '· ' + c.status : ''} ${c.is_yonko === 'Oui' ? '· 👑 Yonko' : ''}</div>
+        </div>
+        <div class="item-id" title="${c.id}">${c.id}</div>
+      </div>`).join('');
+    toast(`${data.length} équipage(s) chargé(s)`);
+  } catch (e) {
+    list.innerHTML = `<div class="empty-state" style="color:var(--error)"><span>⚠️</span>${e.detail || 'Erreur de connexion'}</div>`;
+    toast('Erreur: ' + (e.detail || 'serveur inaccessible'), 'error');
+  }
+}
+
+function fillCrewIds(id) {
+  document.getElementById('crew-update-id').value = id;
+  document.getElementById('crew-delete-id').value = id;
+  toast('ID copié dans les champs update/delete', 'success');
+}
+
+async function searchCrew() {
+  const name = document.getElementById('crew-search-name').value.trim();
+  if (!name) { toast('Entre un nom à rechercher', 'error'); return; }
+  try {
+    const data = await api('GET', `/crews/search?name=${encodeURIComponent(name)}`);
+    showResult('crew-search-result', data);
+    toast('Équipage trouvé !');
+  } catch (e) {
+    showResult('crew-search-result', e, true);
+    toast(e.detail || 'Équipage non trouvé', 'error');
+  }
+}
+
+async function createCrew() {
+  const body = {
+    id: parseInt(document.getElementById('crew-create-id').value) || null,
+    name: document.getElementById('crew-create-name').value.trim(),
+    description: document.getElementById('crew-create-description').value.trim(),
+    status: document.getElementById('crew-create-status').value.trim(),
+    number: document.getElementById('crew-create-number').value.trim(),
+    roman_name: document.getElementById('crew-create-roman-name').value.trim(),
+    total_prime: document.getElementById('crew-create-total-prime').value.trim(),
+    is_yonko: document.getElementById('crew-create-is-yonko').value,
+  };
+  if (!body.name) { toast('Le nom est obligatoire', 'error'); return; }
+  try {
+    const data = await api('POST', '/crews', body);
+    showResult('crew-create-result', data);
+    toast('Équipage créé ! 🏴‍☠️');
+    ['crew-create-name','crew-create-description','crew-create-status','crew-create-number','crew-create-roman-name','crew-create-total-prime'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('crew-create-id').value = '';
+  } catch (e) {
+    showResult('crew-create-result', e, true);
+    toast('Erreur création: ' + (e.detail || ''), 'error');
+  }
+}
+
+async function updateCrew() {
+  const id = document.getElementById('crew-update-id').value.trim();
+  if (!id) { toast("Entre l'ID de l'équipage", 'error'); return; }
+  const body = {
+    name: document.getElementById('crew-update-name').value.trim(),
+    description: document.getElementById('crew-update-description').value.trim(),
+    status: document.getElementById('crew-update-status').value.trim(),
+    number: document.getElementById('crew-update-number').value.trim(),
+    roman_name: document.getElementById('crew-update-roman-name').value.trim(),
+    total_prime: document.getElementById('crew-update-total-prime').value.trim(),
+    is_yonko: document.getElementById('crew-update-is-yonko').value || undefined,
+  };
+  try {
+    const data = await api('PUT', `/crews/${id}`, body);
+    showResult('crew-update-result', data);
+    toast('Équipage mis à jour ✓');
+  } catch (e) {
+    showResult('crew-update-result', e, true);
+    toast(e.detail || 'Erreur mise à jour', 'error');
+  }
+}
+
+async function deleteCrew() {
+  const id = document.getElementById('crew-delete-id').value.trim();
+  if (!id) { toast("Entre l'ID à supprimer", 'error'); return; }
+  if (!confirm(`Supprimer l'équipage ${id} ?`)) return;
+  try {
+    const data = await api('DELETE', `/crews/${id}`);
+    showResult('crew-delete-result', data);
+    toast('Équipage supprimé 🗑️');
+    document.getElementById('crew-delete-id').value = '';
+    getCrews();
+  } catch (e) {
+    showResult('crew-delete-result', e, true);
+    toast(e.detail || 'Erreur suppression', 'error');
+  }
+}
+</script>
+</body>
+</html>
