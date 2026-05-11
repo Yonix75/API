@@ -53,15 +53,19 @@ def search_fruit(name: str):#ici param selon le nom
 
 @router.put("/{id}")
 def update_fruit(id: str, fruit: DevilFruit):
+    # exclude_none : ne met a jour que les champs envoyes
+    # Evite d'ecraser filename/roman_name avec None si non fournis
+    update_data = {k: v for k, v in fruit.dict().items() if v is not None}
+    
     result = fruits_collection.update_one(
         {"_id": ObjectId(id)},
-        {"$set": fruit.dict()}
+        {"$set": update_data}
     )
-    
     if result.matched_count == 0:
-        raise HTTPException(status_code=404, detail="Fruit non trouvé")#
+        raise HTTPException(status_code=404, detail="Fruit non trouve")
     
-    return {"message": "update"}
+    updated = fruits_collection.find_one({"_id": ObjectId(id)})
+    return serialize(updated)
 
 @router.delete("/{id}")#insert id mango
 def delete_fruit(id: str):

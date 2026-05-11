@@ -1,6 +1,10 @@
 from pymongo import MongoClient
+import os
+from dotenv import load_dotenv
+load_dotenv()
+mongo_uri= os.getenv("MONGO_URI")
+client = MongoClient(mongo_uri)
 
-client = MongoClient("mongodb+srv://contactyonibena_db_user:9Y4eZoy57FqiGPAa@cluster0.ov7ongd.mongodb.net/?appName=Cluster0")
 db = client["onepiece"]
 
 fruits_collection = db["fruits"]

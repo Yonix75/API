@@ -224,9 +224,96 @@
   }
 
   .result-box.show { display: block; }
-
   .result-box.success { border-color: rgba(34,197,94,0.25); }
   .result-box.error { border-color: rgba(239,68,68,0.25); }
+
+  /* ── PRETTY RESULT CARD ── */
+  .pretty-card {
+    margin-top: 14px;
+    background: var(--navy);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+  .pretty-card.show { display: block; }
+  .pretty-card.success { border-color: rgba(34,197,94,0.25); }
+  .pretty-card.error { border-color: rgba(239,68,68,0.25); }
+
+  .pretty-card-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(0,0,0,0.15);
+  }
+  .pretty-card-img {
+    width: 70px;
+    height: 70px;
+    object-fit: contain;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.04);
+    flex-shrink: 0;
+    border: 1px solid var(--border);
+  }
+  .pretty-card-banner {
+    width: 100%;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    flex-shrink: 0;
+    max-width: 120px;
+  }
+  .pretty-card-title-wrap { flex: 1; min-width: 0; }
+  .pretty-card-name { font-family: 'Cinzel', serif; font-size: 15px; color: var(--gold); font-weight: 700; }
+  .pretty-card-sub { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
+  .pretty-card-type-badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 12px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    flex-shrink: 0;
+  }
+  .badge-paramecia { background: rgba(196,30,58,0.2); color: #f87171; border: 1px solid rgba(196,30,58,0.3); }
+  .badge-zoan { background: rgba(59,130,246,0.2); color: #93c5fd; border: 1px solid rgba(59,130,246,0.3); }
+  .badge-logia { background: rgba(212,175,55,0.2); color: var(--gold); border: 1px solid rgba(212,175,55,0.3); }
+  .badge-yonko { background: rgba(212,175,55,0.2); color: var(--gold); border: 1px solid rgba(212,175,55,0.3); }
+  .badge-crew { background: rgba(20,184,166,0.15); color: #14B8A6; border: 1px solid rgba(20,184,166,0.3); }
+  .badge-error { background: rgba(239,68,68,0.15); color: #EF4444; border: 1px solid rgba(239,68,68,0.3); }
+
+  .pretty-card-body { padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; }
+  .pretty-field {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 12px;
+  }
+  .pretty-field-label {
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    font-size: 10px;
+    min-width: 90px;
+    padding-top: 1px;
+    flex-shrink: 0;
+  }
+  .pretty-field-value { color: var(--text); line-height: 1.5; }
+  .pretty-field-value.highlight { color: var(--gold); font-weight: 700; }
+
+  .pretty-card-error-msg {
+    padding: 14px 16px;
+    color: #EF4444;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
 
   /* JSON coloring */
   .json-key { color: #93C5FD; }
@@ -253,17 +340,37 @@
     background: var(--navy);
     border: 1px solid rgba(255,255,255,0.06);
     border-radius: 8px;
-    padding: 12px 14px;
+    padding: 10px 14px;
     display: flex;
     align-items: center;
     gap: 12px;
     transition: border-color 0.2s;
     animation: fadeIn 0.3s ease;
+    cursor: pointer;
   }
 
   @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
   .item-card:hover { border-color: var(--gold-dim); }
+
+  .item-thumb {
+    width: 38px;
+    height: 38px;
+    object-fit: contain;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.04);
+    flex-shrink: 0;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .item-banner {
+    width: 60px;
+    height: 38px;
+    object-fit: cover;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.04);
+    flex-shrink: 0;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
 
   .item-dot {
     width: 10px; height: 10px;
@@ -409,7 +516,7 @@
         </div>
         <button class="btn btn-secondary" onclick="searchFruit()">🔍 Rechercher</button>
         <div class="endpoint-line">GET /fruits/search?name={name}</div>
-        <div id="fruit-search-result" class="result-box"></div>
+        <div id="fruit-search-result" class="pretty-card"></div>
       </div>
     </div>
 
@@ -458,7 +565,7 @@
         </div>
         <button class="btn btn-primary" onclick="createFruit()">➕ Créer le fruit</button>
         <div class="endpoint-line">POST /fruits · Body: JSON</div>
-        <div id="fruit-create-result" class="result-box"></div>
+        <div id="fruit-create-result" class="pretty-card"></div>
       </div>
     </div>
 
@@ -511,7 +618,7 @@
         </div>
         <button class="btn btn-warning" onclick="updateFruit()">💾 Mettre à jour</button>
         <div class="endpoint-line">PUT /fruits/{id} · Body: JSON</div>
-        <div id="fruit-update-result" class="result-box"></div>
+        <div id="fruit-update-result" class="pretty-card"></div>
       </div>
     </div>
 
@@ -533,7 +640,7 @@
         <button class="btn btn-danger" onclick="deleteFruit()" style="height:38px">🗑️ Supprimer</button>
         <div style="grid-column:1/-1">
           <div class="endpoint-line">DELETE /fruits/{id}</div>
-          <div id="fruit-delete-result" class="result-box"></div>
+          <div id="fruit-delete-result" class="pretty-card"></div>
         </div>
       </div>
     </div>
@@ -554,7 +661,7 @@
         <div class="section-icon icon-teal">📋</div>
         <div>
           <div class="section-title">Lister les équipages</div>
-          <div class="section-desc">Récupère tous les équipages, filtrable par type</div>
+          <div class="section-desc">Récupère tous les équipages</div>
         </div>
         <span class="method-tag get-tag">GET</span>
       </div>
@@ -588,7 +695,7 @@
         </div>
         <button class="btn btn-secondary" onclick="searchCrew()">🔍 Rechercher</button>
         <div class="endpoint-line">GET /crews/search?name={name}</div>
-        <div id="crew-search-result" class="result-box"></div>
+        <div id="crew-search-result" class="pretty-card"></div>
       </div>
     </div>
 
@@ -605,7 +712,8 @@
       <div class="section-body">
         <div class="row">
           <div class="field">
-            <label>ID <span style="color:var(--red)">*</span></label>
+            <!-- CORRECTION: crew_id au lieu de id pour correspondre au modèle Pydantic -->
+            <label>ID numérique</label>
             <input id="crew-create-id" type="number" placeholder="ex: 1">
           </div>
           <div class="field">
@@ -646,7 +754,7 @@
         </div>
         <button class="btn btn-primary" onclick="createCrew()">➕ Créer l'équipage</button>
         <div class="endpoint-line">POST /crews · Body: JSON</div>
-        <div id="crew-create-result" class="result-box"></div>
+        <div id="crew-create-result" class="pretty-card"></div>
       </div>
     </div>
 
@@ -703,7 +811,7 @@
         </div>
         <button class="btn btn-warning" onclick="updateCrew()">💾 Mettre à jour</button>
         <div class="endpoint-line">PUT /crews/{id} · Body: JSON</div>
-        <div id="crew-update-result" class="result-box"></div>
+        <div id="crew-update-result" class="pretty-card"></div>
       </div>
     </div>
 
@@ -725,7 +833,7 @@
         <button class="btn btn-danger" onclick="deleteCrew()" style="height:38px">🗑️ Supprimer</button>
         <div style="grid-column:1/-1">
           <div class="endpoint-line">DELETE /crews/{id}</div>
-          <div id="crew-delete-result" class="result-box"></div>
+          <div id="crew-delete-result" class="pretty-card"></div>
         </div>
       </div>
     </div>
@@ -759,7 +867,7 @@ function toast(msg, type = 'success') {
 function colorJson(obj) {
   const str = JSON.stringify(obj, null, 2);
   return str
-    .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, match => {
+    .replace(/(\"(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*\"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, match => {
       if (/^"/.test(match)) {
         if (/:$/.test(match)) return `<span class="json-key">${match}</span>`;
         return `<span class="json-str">${match}</span>`;
@@ -770,10 +878,135 @@ function colorJson(obj) {
     });
 }
 
-function showResult(id, data, isError = false) {
+// ── Image helpers ──
+const DEVIL_FRUIT_IMAGES = {
+  'gomu gomu': 'https://images.api-onepiece.com/fruits/5665e89442022d4c0e7684c650dc6d6b.png',
+  'bara bara': 'https://images.api-onepiece.com/fruits/ce8729339b41da72e8e0f81dd7f71eee.png',
+  'sube sube': 'https://images.api-onepiece.com/fruits/8eb2a1bcdebacd9077ce4881a2493e2d.png',
+  'hana hana': 'https://images.api-onepiece.com/fruits/5f82c2c5df83335a916f98dc3b09eade.png',
+  'ito ito':   'https://images.api-onepiece.com/fruits/0f40216451f24b2e66c9af2415f97548.png',
+  'nikyu nikyu': 'https://images.api-onepiece.com/fruits/16cd53be2d987c15311b7f5e55deb3c2.png',
+  'ope ope':   'https://images.api-onepiece.com/fruits/9e630a35c5acb817bfea06e65d72b661.png',
+  'jiki jiki': 'https://images.api-onepiece.com/fruits/79014303ec2ac76ecdefdb8b19928fb9.png',
+  'shiro shiro': 'https://images.api-onepiece.com/fruits/0dfd5dd587490832579f7ea6e3384e92.png',
+  'awa awa':   'https://images.api-onepiece.com/fruits/07ea2172d8a86e7db1b8355778a3ff92.png',
+  'yomi yomi': 'https://images.api-onepiece.com/fruits/56fc9cdf59bcd8a6e53b3e7c31e11005.png',
+  'kage kage': 'https://images.api-onepiece.com/fruits/de5dadf8502878ee5354b1c952b74f8b.png',
+  'mera mera': 'https://images.api-onepiece.com/fruits/a3a4f5f2d3b965e3836613b5d3036348.jpg',
+  'yami yami': 'https://images.api-onepiece.com/fruits/d108706dfcaa5bcf3cddd184ddbb52a5.png',
+  'hito hito': 'https://images.api-onepiece.com/fruits/28c479a3d76524452745f40bde7a0c37.png',
+  'uo uo':     'https://images.api-onepiece.com/fruits/f640990d0f10e51a1bc097ffe6ab511c.jpg',
+  'inu inu no mi moderu okuchi': 'https://images.api-onepiece.com/fruits/a3b44d115359ee0d7844ba8710ab4e08.png',
+};
+
+function getFruitImage(name, romanName, filename) {
+  if (filename) return filename;
+  const tryName = (n) => {
+    if (!n) return null;
+    const lower = n.toLowerCase();
+    for (const [key, url] of Object.entries(DEVIL_FRUIT_IMAGES)) {
+      if (lower.includes(key)) return url;
+    }
+    return null;
+  };
+  return tryName(romanName) || tryName(name) || null;
+}
+
+function getCrewBanner(name) {
+  if (!name) return null;
+  const n = (name || '').toLowerCase();
+  const map = {
+    'chapeau de paille': 'https://static.wikia.nocookie.net/onepiece/images/a/a6/Straw_Hat_Pirates_Jolly_Roger.png',
+    'straw hat': 'https://static.wikia.nocookie.net/onepiece/images/a/a6/Straw_Hat_Pirates_Jolly_Roger.png',
+    'mugiwara': 'https://static.wikia.nocookie.net/onepiece/images/a/a6/Straw_Hat_Pirates_Jolly_Roger.png',
+    'barbe blanche': 'https://static.wikia.nocookie.net/onepiece/images/9/9c/Whitebeard_Pirates_Jolly_Roger.png',
+    'whitebeard': 'https://static.wikia.nocookie.net/onepiece/images/9/9c/Whitebeard_Pirates_Jolly_Roger.png',
+    'barbe noire': 'https://static.wikia.nocookie.net/onepiece/images/1/1a/Blackbeard_Pirates_Jolly_Roger.png',
+    'blackbeard': 'https://static.wikia.nocookie.net/onepiece/images/1/1a/Blackbeard_Pirates_Jolly_Roger.png',
+    'red hair': 'https://static.wikia.nocookie.net/onepiece/images/2/2b/Red_Hair_Pirates_Jolly_Roger.png',
+    'cheveux rouges': 'https://static.wikia.nocookie.net/onepiece/images/2/2b/Red_Hair_Pirates_Jolly_Roger.png',
+    'shanks': 'https://static.wikia.nocookie.net/onepiece/images/2/2b/Red_Hair_Pirates_Jolly_Roger.png',
+    'heart': 'https://static.wikia.nocookie.net/onepiece/images/d/d4/Heart_Pirates_Jolly_Roger.png',
+    'coeur': 'https://static.wikia.nocookie.net/onepiece/images/d/d4/Heart_Pirates_Jolly_Roger.png',
+    'trafalgar': 'https://static.wikia.nocookie.net/onepiece/images/d/d4/Heart_Pirates_Jolly_Roger.png',
+    'beast': 'https://static.wikia.nocookie.net/onepiece/images/1/14/Beasts_Pirates_Jolly_Roger.png',
+    'kaido': 'https://static.wikia.nocookie.net/onepiece/images/1/14/Beasts_Pirates_Jolly_Roger.png',
+    'big mom': 'https://static.wikia.nocookie.net/onepiece/images/2/24/Big_Mom_Pirates_Jolly_Roger.png',
+    'charlotte': 'https://static.wikia.nocookie.net/onepiece/images/2/24/Big_Mom_Pirates_Jolly_Roger.png',
+    'roger': 'https://static.wikia.nocookie.net/onepiece/images/d/d1/Roger_Pirates_Jolly_Roger.png',
+    'baroque': 'https://static.wikia.nocookie.net/onepiece/images/a/ac/Baroque_Works_Jolly_Roger.png',
+    'don quichotte': 'https://static.wikia.nocookie.net/onepiece/images/5/5c/Donquixote_Pirates_Jolly_Roger.png',
+    'donquixote': 'https://static.wikia.nocookie.net/onepiece/images/5/5c/Donquixote_Pirates_Jolly_Roger.png',
+    'doflamingo': 'https://static.wikia.nocookie.net/onepiece/images/5/5c/Donquixote_Pirates_Jolly_Roger.png',
+    'kid': 'https://static.wikia.nocookie.net/onepiece/images/0/04/Kid_Pirates_Jolly_Roger.png',
+    'sun': 'https://static.wikia.nocookie.net/onepiece/images/5/57/Sun_Pirates_Jolly_Roger.png',
+    'soleil': 'https://static.wikia.nocookie.net/onepiece/images/5/57/Sun_Pirates_Jolly_Roger.png',
+  };
+  for (const [key, url] of Object.entries(map)) {
+    if (n.includes(key)) return url;
+  }
+  return null;
+}
+
+// ── Pretty Card renderer ──
+function showPrettyCard(id, data, isError = false, type = 'fruit') {
   const el = document.getElementById(id);
-  el.innerHTML = colorJson(data);
-  el.className = 'result-box show ' + (isError ? 'error' : 'success');
+  if (!el) return;
+
+  if (isError) {
+    el.className = 'pretty-card show error';
+    el.innerHTML = `<div class="pretty-card-error-msg">⚠️ ${data.detail || data.message || JSON.stringify(data)}</div>`;
+    return;
+  }
+
+  el.className = 'pretty-card show success';
+
+  if (type === 'fruit') {
+    const imgUrl = getFruitImage(data.name, data.roman_name, data.filename);
+    const typeBadge = data.type ? `<span class="pretty-card-type-badge badge-${(data.type||'').toLowerCase()}">${data.type}</span>` : '';
+    const imgHtml = imgUrl
+      ? `<img class="pretty-card-img" src="${imgUrl}" alt="${data.name}" onerror="this.style.display='none'">`
+      : `<div class="pretty-card-img" style="display:flex;align-items:center;justify-content:center;font-size:28px">🍑</div>`;
+
+    el.innerHTML = `
+      <div class="pretty-card-header">
+        ${imgHtml}
+        <div class="pretty-card-title-wrap">
+          <div class="pretty-card-name">${data.name || '—'}</div>
+          <div class="pretty-card-sub">${data.power || ''}</div>
+        </div>
+        ${typeBadge}
+      </div>
+      <div class="pretty-card-body">
+        ${data.current_user ? `<div class="pretty-field"><span class="pretty-field-label">Utilisateur</span><span class="pretty-field-value highlight">${data.current_user}</span></div>` : ''}
+        ${data.previous_user ? `<div class="pretty-field"><span class="pretty-field-label">Précédent</span><span class="pretty-field-value">${data.previous_user}</span></div>` : ''}
+        ${data.description ? `<div class="pretty-field"><span class="pretty-field-label">Description</span><span class="pretty-field-value">${data.description}</span></div>` : ''}
+        ${data.id ? `<div class="pretty-field"><span class="pretty-field-label">ID</span><span class="pretty-field-value" style="font-family:monospace;font-size:11px;color:var(--text-muted)">${data.id}</span></div>` : ''}
+      </div>`;
+  } else if (type === 'crew') {
+    const bannerUrl = getCrewBanner(data.name) || getCrewBanner(data.roman_name);
+    const bannerHtml = bannerUrl
+      ? `<img class="pretty-card-banner" src="${bannerUrl}" alt="${data.name}" onerror="this.style.display='none'">`
+      : `<div class="pretty-card-banner" style="display:flex;align-items:center;justify-content:center;font-size:24px">🏴‍☠️</div>`;
+    const yonkoBadge = data.is_yonko === 'Oui' ? `<span class="pretty-card-type-badge badge-yonko">👑 Yonko</span>` : `<span class="pretty-card-type-badge badge-crew">Équipage</span>`;
+
+    el.innerHTML = `
+      <div class="pretty-card-header">
+        ${bannerHtml}
+        <div class="pretty-card-title-wrap">
+          <div class="pretty-card-name">${data.name || '—'}</div>
+          <div class="pretty-card-sub">${data.roman_name || ''}</div>
+        </div>
+        ${yonkoBadge}
+      </div>
+      <div class="pretty-card-body">
+        ${data.status ? `<div class="pretty-field"><span class="pretty-field-label">Statut</span><span class="pretty-field-value highlight">${data.status}</span></div>` : ''}
+        ${data.number ? `<div class="pretty-field"><span class="pretty-field-label">Membres</span><span class="pretty-field-value">${data.number}</span></div>` : ''}
+        ${data.total_prime ? `<div class="pretty-field"><span class="pretty-field-label">Prime totale</span><span class="pretty-field-value">${data.total_prime} Berry</span></div>` : ''}
+        ${data.description ? `<div class="pretty-field"><span class="pretty-field-label">Description</span><span class="pretty-field-value">${data.description}</span></div>` : ''}
+        ${data.id ? `<div class="pretty-field"><span class="pretty-field-label">ID</span><span class="pretty-field-value" style="font-family:monospace;font-size:11px;color:var(--text-muted)">${data.id}</span></div>` : ''}
+      </div>`;
+  }
 }
 
 // ── API helpers ──
@@ -802,15 +1035,22 @@ async function getFruits() {
       list.innerHTML = '<div class="empty-state"><span>🍑</span>Aucun fruit trouvé</div>';
       return;
     }
-    list.innerHTML = data.map(f => `
+    list.innerHTML = data.map(f => {
+      const imgUrl = getFruitImage(f.name, f.roman_name, f.filename);
+      const dotClass = f.type === 'Logia' ? 'dot-gold' : f.type && f.type.startsWith('Zoan') ? 'dot-blue' : 'dot-red';
+      const imgEl = imgUrl
+        ? `<img class="item-thumb" src="${imgUrl}" alt="${f.name}" onerror="this.outerHTML='<div class=&quot;item-dot ${dotClass}&quot;></div>'">` 
+        : `<div class="item-dot ${dotClass}"></div>`;
+      return `
       <div class="item-card" onclick="fillFruitIds('${f.id}')">
-        <div class="item-dot ${f.type === 'Logia' ? 'dot-gold' : f.type === 'Zoan' ? 'dot-blue' : 'dot-red'}"></div>
+        ${imgEl}
         <div>
           <div class="item-name">${f.name || '—'}</div>
-          <div class="item-meta">${f.type || ''} ${f.user ? '· ' + f.user : ''}</div>
+          <div class="item-meta">${f.type || ''} ${f.current_user ? '· ' + f.current_user : ''}</div>
         </div>
         <div class="item-id" title="${f.id}">${f.id}</div>
-      </div>`).join('');
+      </div>`;
+    }).join('');
     toast(`${data.length} fruit(s) chargé(s)`);
   } catch (e) {
     list.innerHTML = `<div class="empty-state" style="color:var(--error)"><span>⚠️</span>${e.detail || 'Erreur de connexion'}</div>`;
@@ -829,10 +1069,10 @@ async function searchFruit() {
   if (!name) { toast('Entre un nom à rechercher', 'error'); return; }
   try {
     const data = await api('GET', `/fruits/search?name=${encodeURIComponent(name)}`);
-    showResult('fruit-search-result', data);
+    showPrettyCard('fruit-search-result', data, false, 'fruit');
     toast('Fruit trouvé !');
   } catch (e) {
-    showResult('fruit-search-result', e, true);
+    showPrettyCard('fruit-search-result', e, true, 'fruit');
     toast(e.detail || 'Fruit non trouvé', 'error');
   }
 }
@@ -850,11 +1090,11 @@ async function createFruit() {
   if (!body.power) { toast('Le pouvoir est obligatoire', 'error'); return; }
   try {
     const data = await api('POST', '/fruits', body);
-    showResult('fruit-create-result', data);
+    showPrettyCard('fruit-create-result', data, false, 'fruit');
     toast('Fruit créé ! 🍑');
     ['fruit-create-name','fruit-create-power','fruit-create-current-user','fruit-create-previous-user','fruit-create-description'].forEach(id => document.getElementById(id).value = '');
   } catch (e) {
-    showResult('fruit-create-result', e, true);
+    showPrettyCard('fruit-create-result', e, true, 'fruit');
     toast('Erreur création: ' + (e.detail || ''), 'error');
   }
 }
@@ -872,10 +1112,10 @@ async function updateFruit() {
   };
   try {
     const data = await api('PUT', `/fruits/${id}`, body);
-    showResult('fruit-update-result', data);
+    showPrettyCard('fruit-update-result', data, false, 'fruit');
     toast('Fruit mis à jour ✓');
   } catch (e) {
-    showResult('fruit-update-result', e, true);
+    showPrettyCard('fruit-update-result', e, true, 'fruit');
     toast(e.detail || 'Erreur mise à jour', 'error');
   }
 }
@@ -886,12 +1126,12 @@ async function deleteFruit() {
   if (!confirm(`Supprimer le fruit ${id} ?`)) return;
   try {
     const data = await api('DELETE', `/fruits/${id}`);
-    showResult('fruit-delete-result', data);
+    showPrettyCard('fruit-delete-result', data, false, 'fruit');
     toast('Fruit supprimé 🗑️');
     document.getElementById('fruit-delete-id').value = '';
     getFruits();
   } catch (e) {
-    showResult('fruit-delete-result', e, true);
+    showPrettyCard('fruit-delete-result', e, true, 'fruit');
     toast(e.detail || 'Erreur suppression', 'error');
   }
 }
@@ -909,15 +1149,21 @@ async function getCrews() {
       list.innerHTML = '<div class="empty-state"><span>🏴‍☠️</span>Aucun équipage trouvé</div>';
       return;
     }
-    list.innerHTML = data.map(c => `
+    list.innerHTML = data.map(c => {
+      const bannerUrl = getCrewBanner(c.name) || getCrewBanner(c.roman_name);
+      const bannerEl = bannerUrl
+        ? `<img class="item-banner" src="${bannerUrl}" alt="${c.name}" onerror="this.outerHTML='<div class=item-dot dot-gold></div>'">`
+        : `<div class="item-dot dot-gold"></div>`;
+      return `
       <div class="item-card" onclick="fillCrewIds('${c.id}')">
-        <div class="item-dot dot-gold"></div>
+        ${bannerEl}
         <div>
           <div class="item-name">${c.name || '—'}</div>
-          <div class="item-meta">${c.roman_name ? c.roman_name : ''} ${c.status ? '· ' + c.status : ''} ${c.is_yonko === 'Oui' ? '· 👑 Yonko' : ''}</div>
+          <div class="item-meta">${c.roman_name || ''} ${c.status ? '· ' + c.status : ''} ${c.is_yonko === 'Oui' ? '· 👑 Yonko' : ''}</div>
         </div>
         <div class="item-id" title="${c.id}">${c.id}</div>
-      </div>`).join('');
+      </div>`;
+    }).join('');
     toast(`${data.length} équipage(s) chargé(s)`);
   } catch (e) {
     list.innerHTML = `<div class="empty-state" style="color:var(--error)"><span>⚠️</span>${e.detail || 'Erreur de connexion'}</div>`;
@@ -936,17 +1182,18 @@ async function searchCrew() {
   if (!name) { toast('Entre un nom à rechercher', 'error'); return; }
   try {
     const data = await api('GET', `/crews/search?name=${encodeURIComponent(name)}`);
-    showResult('crew-search-result', data);
+    showPrettyCard('crew-search-result', data, false, 'crew');
     toast('Équipage trouvé !');
   } catch (e) {
-    showResult('crew-search-result', e, true);
+    showPrettyCard('crew-search-result', e, true, 'crew');
     toast(e.detail || 'Équipage non trouvé', 'error');
   }
 }
 
 async function createCrew() {
   const body = {
-    id: parseInt(document.getElementById('crew-create-id').value) || null,
+    // CORRECTION: crew_id correspond au champ renommé dans models.py
+    crew_id: parseInt(document.getElementById('crew-create-id').value) || null,
     name: document.getElementById('crew-create-name').value.trim(),
     description: document.getElementById('crew-create-description').value.trim(),
     status: document.getElementById('crew-create-status').value.trim(),
@@ -958,12 +1205,12 @@ async function createCrew() {
   if (!body.name) { toast('Le nom est obligatoire', 'error'); return; }
   try {
     const data = await api('POST', '/crews', body);
-    showResult('crew-create-result', data);
+    showPrettyCard('crew-create-result', data, false, 'crew');
     toast('Équipage créé ! 🏴‍☠️');
     ['crew-create-name','crew-create-description','crew-create-status','crew-create-number','crew-create-roman-name','crew-create-total-prime'].forEach(id => document.getElementById(id).value = '');
     document.getElementById('crew-create-id').value = '';
   } catch (e) {
-    showResult('crew-create-result', e, true);
+    showPrettyCard('crew-create-result', e, true, 'crew');
     toast('Erreur création: ' + (e.detail || ''), 'error');
   }
 }
@@ -982,10 +1229,10 @@ async function updateCrew() {
   };
   try {
     const data = await api('PUT', `/crews/${id}`, body);
-    showResult('crew-update-result', data);
+    showPrettyCard('crew-update-result', data, false, 'crew');
     toast('Équipage mis à jour ✓');
   } catch (e) {
-    showResult('crew-update-result', e, true);
+    showPrettyCard('crew-update-result', e, true, 'crew');
     toast(e.detail || 'Erreur mise à jour', 'error');
   }
 }
@@ -996,12 +1243,12 @@ async function deleteCrew() {
   if (!confirm(`Supprimer l'équipage ${id} ?`)) return;
   try {
     const data = await api('DELETE', `/crews/${id}`);
-    showResult('crew-delete-result', data);
+    showPrettyCard('crew-delete-result', data, false, 'crew');
     toast('Équipage supprimé 🗑️');
     document.getElementById('crew-delete-id').value = '';
     getCrews();
   } catch (e) {
-    showResult('crew-delete-result', e, true);
+    showPrettyCard('crew-delete-result', e, true, 'crew');
     toast(e.detail || 'Erreur suppression', 'error');
   }
 }

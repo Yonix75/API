@@ -47,15 +47,18 @@ def search_crew(name: str):#ici param selon le nom
 
 @router.put("/{id}")
 def update_fruit(id: str, crew: crews):
+     # CORRECTION : exclure les champs None pour ne pas écraser les données existantes
+    update_data = {k: v for k, v in crew.dict().items() if v is not None}
+ 
     result = crews_collection.update_one(
         {"_id": ObjectId(id)},
-        {"$set": crew.dict()}
+        {"$set": update_data}
     )
     if result.matched_count == 0:
-        raise HTTPException(status_code=404, detail="Fruit non trouvé")#
-    
-    return {"message": "update"}
-
+        raise HTTPException(status_code=404, detail="Crew not found")
+ 
+    updated = crews_collection.find_one({"_id": ObjectId(id)})
+    return serialize(updated)
 
 
 @router.delete("/{id}")#insert id mango
